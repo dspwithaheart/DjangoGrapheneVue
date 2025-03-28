@@ -1,0 +1,54 @@
+version: "3.8"
+
+networks:
+  proxy_network:
+    external: true
+    name: "${PROXY_NETWORK?Variable not defined}"
+
+services:
+  {{cookiecutter.project_slug}}:
+    image: "dockerRegistry/it/{{cookiecutter.project_slug}}/{{cookiecutter.project_slug}}:${TAG_VERSION}"
+
+    environment:
+
+      # general
+      SECRET_KEY: "${SECRET_KEY?Variable not defined}"
+      ENV: "${ENV?Variable not defined}"
+      ALLOWED_HOSTS: "${ALLOWED_HOSTS?Variable not defined}"
+      TAG_VERSION: "${TAG_VERSION?Variable not defined}"
+
+      # Database
+      # oracle
+      {{cookiecutter.project_slug.upper()}}_DB_HOST: "${'{{cookiecutter.project_slug.upper()}}'_DB_HOST?Variable not defined}"
+      {{cookiecutter.project_slug.upper()}}_DB_PORT: "${'{{cookiecutter.project_slug.upper()}}'_DB_PORT?Variable not defined}"
+      {{cookiecutter.project_slug.upper()}}_DB_SERVICE: "${'{{cookiecutter.project_slug.upper()}}'_DB_SERVICE?Variable not defined}"
+      {{cookiecutter.project_slug.upper()}}_DB_USER: "${'{{cookiecutter.project_slug.upper()}}'_DB_USER?Variable not defined}"
+      {{cookiecutter.project_slug.upper()}}_DB_PASSWORD: "${'{{cookiecutter.project_slug.upper()}}'_DB_PASSWORD?Variable not defined}"
+
+      # LDAP
+      LDAP_CN: "${LDAP_CN?Variable not defined}"
+      LDAP_PW: "${LDAP_PW?Variable not defined}"
+
+    dns_search:
+      - domain-name.com
+
+    networks:
+      - proxy_network
+
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints: [node.role == worker]
+      labels:
+        # service description for automatic detection by Traefik
+        - "traefik.enable=true"
+        - "traefik.docker.network=${PROXY_NETWORK}"
+        - "traefik.http.services.{{cookiecutter.project_slug}}_${ENV}.loadbalancer.server.port=8000"
+        # access via dedicated (wildcard) URL 'http://<service>.<domain>'
+        - "traefik.http.routers.{{cookiecutter.project_slug}}_${ENV}_virtualhost.entrypoints=http"
+        - "traefik.http.routers.{{cookiecutter.project_slug}}_${ENV}_virtualhost.rule=Host(`${PROXY_SUBDOMAIN}.${PROXY_DOMAIN}`)"
+        # Https router
+        - "traefik.http.routers.sciadataprep_https_${ENV}_virtualhost.entrypoints=websecure"
+        - "traefik.http.routers.sciadataprep_https_${ENV}_virtualhost.rule=Host(`${PROXY_SUBDOMAIN}.${PROXY_DOMAIN}`)"
+

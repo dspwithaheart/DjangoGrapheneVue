@@ -1,0 +1,12 @@
+Django==4.1
+djangorestframework==3.14.0
+djangorestframework-datatables==0.7.0
+drf-yasg==1.21.7
+mypy-extensions==1.0.0
+mysql-connector-python==8.2.0
+mysqlclient==2.2.0
+nodeenv==1.8.0
+django_filter
+python-dotenv
+oracledb==2.1.1
+cx-Oracle==8.3.0

@@ -1,0 +1,119 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "{{cookiecutter.project_slug}}"
+description = "Interface to {{cookiecutter.project_slug.upper()}} (Django + Vue + Vite)"
+readme = "README.rst"
+requires-python = ">=3.12"
+license-files = { paths = ["LICENSE"] }
+keywords = []
+authors = [
+  { name = "Aayush Yadav", email = "aayush.yadav@domain-name.com" },
+]
+classifiers = [
+  "Development Status :: 2 - Pre-Alpha",
+  "Intended Audience :: Developers",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+dependencies = [
+"certifi",  
+"django==5.0",
+"djangorestframework",
+"drf-yasg",
+"django-auth-ldap",
+"djangorestframework-datatables",
+"django_filter",
+"oracledb",
+"xmlschema",
+# "numpy",
+# "matplotlib",
+# "shapely",
+# "geopandas", #For Plotting patterns
+# "mysql-connector-python==8.2.0",
+# "mysqlclient==2.2.0",
+"python-dotenv",
+#"nodeenv==1.8.0",
+"graphene-django",
+"django-graphql-jwt",
+"gunicorn"
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "http://gitServer.domain-name.com/yadava/{{cookiecutter.project_slug}}"
+Issues = "http://gitServer.domain-name.com/yadava/{{cookiecutter.project_slug}}/issues"
+Source = "http://gitServer.domain-name.com/yadava/{{cookiecutter.project_slug}}"
+
+[tool.hatch.build]
+exclude = [
+  "tests",
+  "doc",
+  "sonar-project.properties",
+  "coverage.svg",
+]
+
+[tool.hatch.version]
+path = "src/{{cookiecutter.project_slug}}django/config/__init__.py"
+
+[tool.hatch.envs.default]
+installer = "uv"
+
+[tool.hatch.envs.dev]
+dependencies = [
+  "pre-commit",
+  "black",
+  "pytest",
+  "pytest-cov",
+  "coverage-badge",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/{{cookiecutter.project_slug}}django"]
+
+[tool.hatch.envs.dev.scripts]
+preinit = "pre-commit install"
+pre = "pre-commit run --all-files"
+inspectdb = "cd ./src/{{cookiecutter.project_slug}}django && python manage.py inspectdb"
+csu = "cd ./src/{{cookiecutter.project_slug}}django && python manage.py createsuperuser --username admin"
+generatemodels = "sh ./generatemodels.sh"
+buildonly = "npm run --prefix ./src/{{cookiecutter.project_slug}}ui build"
+vitecov = "npm run --prefix ./src/{{cookiecutter.project_slug}}ui test:coverage"
+runui = "npm run --prefix ./src/{{cookiecutter.project_slug}}ui dev"
+buildui = "sh ./deploy{{cookiecutter.project_slug}}ui.sh"
+build = "sh ./deployandrun.sh"
+pushdebug="git tag -d DEBUG && git tag DEBUG && git push origin :DEBUG && git push origin DEBUG"
+deploy="bash -c 'TAG=$(hatch version); git tag $TAG && git push origin $TAG'"
+deployclean="bash -c 'TAG=$(hatch version); git tag -d $TAG && git tag $TAG ; git push origin :$TAG && git push origin $TAG'"
+
+[tool.hatch.envs.test]
+dependencies = [
+  'coverage',
+  "coverage-badge",
+]
+
+[tool.hatch.envs.test.scripts]
+# needs to cd into Django application folder to run coverage
+cov = "cd ./src/{{cookiecutter.project_slug}}django && coverage run manage.py test"
+reportxml = "coverage xml --data-file=./src/{{cookiecutter.project_slug}}django/.coverage"
+report = "cd ./src/{{cookiecutter.project_slug}}django && coverage report -m"
+badge = "cd ./src/{{cookiecutter.project_slug}}django && coverage-badge -f -o ../../coverage.svg"
+no-cov = "cov --no-cov {args}"
+
+[[tool.hatch.envs.test.matrix]]
+python = ["312", "313"]
+
+[tool.coverage.run]
+branch = true
+parallel = true
+omit = []
+
+[tool.coverage.report]
+exclude_lines = [
+  "no cov",
+  "if __name__ == .__main__.:",
+  "if TYPE_CHECKING:",
+]

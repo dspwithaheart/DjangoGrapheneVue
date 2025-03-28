@@ -1,0 +1,15 @@
+{
+  "full_name": "Aayush Yadav",
+  "email": "aayush.yadav@dspwithaheart.com",
+  "gitlab_username": "yadava",
+  "project_name": "djangoGraphQLVue",
+  "project_slug": "{{ cookiecutter.project_name.lower().replace(' ', '_').replace('-', '_') }}",
+  "project_short_description": "Template contains all the boilerplate you need to create a Fullstack Django Project with DRF, GraphQL, Vue and Vite.",
+  "project_description": "Detailed project description.",
+  "version": "0.1.0",
+  "command_line_interface": ["Configargparse", "Argparse", "Click", "No command-line interface"],
+  "create_author_file": "y",
+  "_copy_without_render": [
+       "src/{{cookiecutter.project_slug}}django/format_index_html.py"
+   ]
+}

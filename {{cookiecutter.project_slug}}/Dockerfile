@@ -1,0 +1,23 @@
+FROM node:lts-alpine
+# install simple http server for serving static content
+RUN npm install -g http-server
+
+
+COPY ./src /src
+RUN cp -r /src/{{cookiecutter.project_slug}}ui /app
+RUN rm -rf /src
+WORKDIR /app
+
+RUN ls
+
+RUN npm -v
+# install project dependencies
+RUN npm install
+
+
+
+# build app for production with minification
+RUN npm run build
+
+EXPOSE 8000
+CMD [ "http-server", "/{{cookiecutter.project_slug}}django/static/", "-p", "8000", "-a", "0.0.0.0"]

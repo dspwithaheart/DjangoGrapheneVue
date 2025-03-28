@@ -1,0 +1,13 @@
+services:
+  web:
+    build: .
+    # image: "dockerRegistry/it/{{cookiecutter.project_slug}}/{{cookiecutter.project_slug}}:0.0.0"
+    # command: python manage.py runserver 0.0.0.0:8080
+    # volumes:
+    #   - ./{{cookiecutter.project_slug}}django/:/usr/src/{{cookiecutter.project_slug}}django/
+    ports:
+      - 8000:8000
+    env_file:
+     - ./.env
+    # entrypoint:
+    #  - "/bin/bash"

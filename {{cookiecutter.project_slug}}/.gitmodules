@@ -1,0 +1,3 @@
+[submodule "src/{{cookiecutter.project_slug}}ui/"]
+	path = src/{{cookiecutter.project_slug}}ui/
+	url = ssh://git@gitServer.domain-name.com:122/it/{{cookiecutter.project_slug}}.git
